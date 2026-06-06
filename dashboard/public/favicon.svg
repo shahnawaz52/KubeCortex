@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="KubeCortex">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5" />
+      <stop offset="1" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)" />
+  <path
+    fill="#fff"
+    d="M32 13.5 48 20v12.3c0 10.2-6.5 17.4-16 20.2-9.5-2.8-16-10-16-20.2V20l16-6.5Zm0 6.4-10 4.1v8.3c0 6.8 3.8 11.6 10 13.9 6.2-2.3 10-7.1 10-13.9V24l-10-4.1Z"
+  />
+</svg>

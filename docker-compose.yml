@@ -59,6 +59,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
+      - ./dashboard/index.html:/app/index.html
+      - ./dashboard/public:/app/public
       - ./dashboard/src:/app/src
     depends_on:
       - api

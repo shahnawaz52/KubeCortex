@@ -2,6 +2,7 @@ from app.db.models import Incident, InvestigationStep
 from app.db.session import SessionLocal
 from app.services.planner import classify_incident
 from app.tools.k8s_state import get_pod_state
+from app.tools.pod_logs import get_pod_logs
 
 
 def process_incident(incident_id: int) -> None:
@@ -71,6 +72,41 @@ def process_incident(incident_id: int) -> None:
                 )
                 db.add(k8s_step)
 
+            db.commit()
+            db.refresh(incident)
+
+            try:
+                logs_result = get_pod_logs(namespace, pod)
+
+                logs_step = InvestigationStep(
+                    incident_id=incident.id,
+                    step_type="pod_logs",
+                    status="completed",
+                    input_payload={
+                        "namespace": namespace,
+                        "pod": pod,
+                        "tail_lines": 50,
+                    },
+                    output_payload=logs_result,
+                )
+                db.add(logs_step)
+            except Exception as exc:
+                logs_step = InvestigationStep(
+                    incident_id=incident.id,
+                    step_type="pod_logs",
+                    status="failed",
+                    input_payload={
+                        "namespace": namespace,
+                        "pod": pod,
+                        "tail_lines": 50,
+                    },
+                    output_payload={
+                        "error": str(exc),
+                    },
+                )
+                db.add(logs_step)
+
+            incident.status = "investigated"
             db.commit()
             db.refresh(incident)
 
