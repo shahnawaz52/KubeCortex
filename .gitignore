@@ -16,3 +16,6 @@ venv/
 .idea/
 *.swp
 *.swo
+
+# Local planning docs
+implementation_plan.md

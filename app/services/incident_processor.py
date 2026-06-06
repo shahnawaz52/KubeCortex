@@ -1,6 +1,7 @@
 from app.db.models import Incident, InvestigationStep
 from app.db.session import SessionLocal
 from app.services.planner import classify_incident
+from app.tools.k8s_state import get_pod_state
 
 
 def process_incident(incident_id: int) -> None:
@@ -36,6 +37,42 @@ def process_incident(incident_id: int) -> None:
 
         db.commit()
         db.refresh(incident)
+
+        if incident_type == "CrashLoopBackOff":
+            labels = incident.raw_alert.get("alerts",[{}])[0].get("labels",{})
+            namespace = labels.get("namespace")
+            pod = labels.get("pod")
+            try:
+                k8s_result = get_pod_state(namespace,pod)
+
+                k8s_step = InvestigationStep(
+                    incident_id=incident.id,
+                    step_type="k8s_state",
+                    status="completed",
+                    input_payload={
+                        "namespace": namespace,
+                        "pod": pod,
+                    },
+                    output_payload=k8s_result,
+                )
+                db.add(k8s_step)
+            except Exception as exc:
+                k8s_step = InvestigationStep(
+                    incident_id=incident.id,
+                    step_type="k8s_state",
+                    status="failed",
+                    input_payload={
+                        "namespace": namespace,
+                        "pod": pod,
+                    },
+                    output_payload={
+                        "error": str(exc),
+                    },
+                )
+                db.add(k8s_step)
+
+            db.commit()
+            db.refresh(incident)
 
     except Exception as exc:
         db.rollback()

@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: kubecortex
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -43,9 +43,11 @@ services:
     command: python -m app.worker
     volumes:
       - ./app:/app/app
+      - ~/.kube/config:/root/.kube/config:ro
     environment:
       DATABASE_URL: postgresql+psycopg://shahnawaz52:admin@postgres:5432/kubecortex
       REDIS_URL: redis://redis:6379/0
+      KUBECONFIG: /root/.kube/config
     depends_on:
       postgres:
         condition: service_healthy
