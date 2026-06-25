@@ -1,8 +1,8 @@
 # KubeCortex
 
-Kubernetes-native incident response system powered by agentic AI.
+Kubernetes-native incident response system powered by agentic AI
 
-KubeCortex ingests alerts, coordinates AI agents to investigate failures, recommends safe remediation, and records every decision in an auditable workflow.
+KubeCortex ingests alerts, coordinates AI agents to investigate failures, recommends safe remediation, and records every decision in an auditable workflow
 
 ## How It Works
 
